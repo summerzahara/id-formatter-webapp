@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL ID Formatter</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #ffffff;
+      color: #1a1a1a;
+      min-height: 100vh;
+      padding: 48px 16px 32px;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #111827;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      font-size: 0.9375rem;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+
+    /* Form sections */
+    .section {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: #1a1a1a;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      resize: vertical;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    textarea[readonly] {
+      cursor: default;
+      color: #374151;
+    }
+
+    #input-ids {
+      min-height: 200px;
+    }
+
+    #output-text {
+      min-height: 120px;
+      background: #f0fdf4;
+      border-color: #d1fae5;
+    }
+
+    /* Format selector */
+    .format-selector {
+      display: flex;
+      gap: 0;
+      margin-top: 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      overflow: hidden;
+      width: fit-content;
+    }
+
+    .format-option {
+      position: relative;
+    }
+
+    .format-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .format-option label {
+      display: block;
+      padding: 7px 16px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: #ffffff;
+      cursor: pointer;
+      border-right: 1px solid #e5e7eb;
+      margin: 0;
+      transition: background 0.1s, color 0.1s;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .format-option:last-child label {
+      border-right: none;
+    }
+
+    .format-option input[type="radio"]:checked + label {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    .format-option label:hover {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .format-option input[type="radio"]:checked + label:hover {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    /* Primary button */
+    .btn-primary {
+      width: 100%;
+      padding: 13px 20px;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: #ffffff;
+      background: #2563eb;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-bottom: 24px;
+    }
+
+    .btn-primary:hover {
+      background: #1d4ed8;
+    }
+
+    .btn-primary:active {
+      background: #1e40af;
+    }
+
+    /* Output section */
+    .output-section {
+      display: none;
+    }
+
+    .output-section.visible {
+      display: block;
+    }
+
+    .output-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .output-header label {
+      margin: 0;
+    }
+
+    .btn-copy {
+      padding: 5px 14px;
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: #2563eb;
+      background: transparent;
+      border: 1px solid #2563eb;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-copy:hover {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    .btn-copy.copied {
+      background: #059669;
+      border-color: #059669;
+      color: #ffffff;
+    }
+
+    .status-line {
+      margin-top: 10px;
+      font-size: 0.8125rem;
+      color: #6b7280;
+    }
+
+    .reset-link {
+      display: inline-block;
+      margin-top: 20px;
+      font-size: 0.875rem;
+      color: #2563eb;
+      text-decoration: none;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+      padding: 0;
+    }
+
+    .reset-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 56px;
+      padding-top: 20px;
+      border-top: 1px solid #f3f4f6;
+      text-align: center;
+      font-size: 0.8125rem;
+      color: #9ca3af;
+    }
+
+    /* Modal overlay */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-overlay.visible {
+      display: flex;
+    }
+
+    .modal {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 32px 28px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      color: #9ca3af;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+    }
+
+    .modal-close:hover {
+      color: #374151;
+    }
+
+    .modal h2 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 10px;
+    }
+
+    .modal p {
+      font-size: 0.875rem;
+      color: #6b7280;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .modal-input-group {
+      margin-bottom: 14px;
+    }
+
+    .modal-input-group label {
+      font-size: 0.8125rem;
+      margin-bottom: 6px;
+    }
+
+    .modal-input-group input[type="email"] {
+      width: 100%;
+      padding: 10px 13px;
+      font-family: inherit;
+      font-size: 0.875rem;
+      color: #1a1a1a;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .modal-input-group input[type="email"]:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .modal-error {
+      font-size: 0.8125rem;
+      color: #dc2626;
+      margin-top: 6px;
+      display: none;
+    }
+
+    .modal-error.visible {
+      display: block;
+    }
+
+    .btn-modal-submit {
+      width: 100%;
+      padding: 11px 20px;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: #ffffff;
+      background: #2563eb;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-modal-submit:hover {
+      background: #1d4ed8;
+    }
+
+    .btn-modal-submit:disabled {
+      background: #93c5fd;
+      cursor: default;
+    }
+
+    /* Mobile */
+    @media (max-width: 480px) {
+      body {
+        padding: 32px 16px 24px;
+      }
+
+      .header h1 {
+        font-size: 1.5rem;
+      }
+
+      .format-selector {
+        width: 100%;
+      }
+
+      .format-option {
+        flex: 1;
+      }
+
+      .format-option label {
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Email gate modal -->
+  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+      <h2 id="modal-title">See your results</h2>
+      <p>Get the formatted list plus occasional tips for data analysts.</p>
+      <div class="modal-input-group">
+        <label for="email-input">Email address</label>
+        <input type="email" id="email-input" placeholder="you@example.com" autocomplete="email">
+        <div class="modal-error" id="email-error">Please enter a valid email address.</div>
+      </div>
+      <button class="btn-modal-submit" id="modal-submit">Get my results</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <header class="header">
+      <h1>SQL ID Formatter</h1>
+      <p>Paste IDs from a spreadsheet. Get them formatted for SQL in one click.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <label for="input-ids">Paste your IDs (one per line)</label>
+        <textarea id="input-ids" placeholder="1001&#10;1002&#10;1003" spellcheck="false"></textarea>
+
+        <div class="format-selector" role="group" aria-label="Output format">
+          <div class="format-option">
+            <input type="radio" name="format" id="format-auto" value="auto" checked>
+            <label for="format-auto">Auto-detect</label>
+          </div>
+          <div class="format-option">
+            <input type="radio" name="format" id="format-numeric" value="numeric">
+            <label for="format-numeric">Numeric</label>
+          </div>
+          <div class="format-option">
+            <input type="radio" name="format" id="format-string" value="string">
+            <label for="format-string">String</label>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="format-btn">Format IDs</button>
+
+      <div class="output-section" id="output-section">
+        <div class="output-header">
+          <label for="output-text">Your formatted list</label>
+          <button class="btn-copy" id="copy-btn">Copy to clipboard</button>
+        </div>
+        <textarea id="output-text" readonly spellcheck="false"></textarea>
+        <div class="status-line" id="status-line"></div>
+        <button class="reset-link" id="reset-btn">Format another list</button>
+      </div>
+    </main>
+
+    <footer class="footer">
+      Built by Summer Hamil | summerhamil10.com
+    </footer>
+  </div>
+
+  <script>
+    const EMAIL_FLAG = 'sql_formatter_email_submitted';
+
+    // Element refs
+    const inputEl       = document.getElementById('input-ids');
+    const formatBtn     = document.getElementById('format-btn');
+    const outputSection = document.getElementById('output-section');
+    const outputEl      = document.getElementById('output-text');
+    const statusEl      = document.getElementById('status-line');
+    const copyBtn       = document.getElementById('copy-btn');
+    const resetBtn      = document.getElementById('reset-btn');
+
+    const modalOverlay  = document.getElementById('modal-overlay');
+    const modalClose    = document.getElementById('modal-close');
+    const emailInput    = document.getElementById('email-input');
+    const emailError    = document.getElementById('email-error');
+    const modalSubmit   = document.getElementById('modal-submit');
+
+    // ─── Format logic ────────────────────────────────────────────────────────
+
+    function getSelectedFormat() {
+      return document.querySelector('input[name="format"]:checked').value;
+    }
+
+    function isNumeric(str) {
+      return /^-?\d+(\.\d+)?$/.test(str.trim());
+    }
+
+    function formatIds(rawText, formatOverride) {
+      const lines = rawText
+        .split('\n')
+        .map(l => l.trim())
+        .filter(l => l.length > 0);
+
+      if (lines.length === 0) return null;
+
+      let useNumeric;
+      if (formatOverride === 'numeric') {
+        useNumeric = true;
+      } else if (formatOverride === 'string') {
+        useNumeric = false;
+      } else {
+        // Auto-detect: numeric only if every line is a valid number
+        useNumeric = lines.every(isNumeric);
+      }
+
+      const formatted = useNumeric
+        ? lines.join(', ')
+        : lines.map(l => `'${l}'`).join(', ');
+
+      return { formatted, count: lines.length, type: useNumeric ? 'numeric' : 'string' };
+    }
+
+    function showOutput(result) {
+      outputEl.value = result.formatted;
+      statusEl.textContent = `${result.count} ID${result.count !== 1 ? 's' : ''} formatted as ${result.type}`;
+      outputSection.classList.add('visible');
+      outputEl.style.minHeight = Math.min(8, result.count) * 1.6 * 14 + 24 + 'px';
+    }
+
+    // ─── Format button handler ───────────────────────────────────────────────
+
+    formatBtn.addEventListener('click', function () {
+      const raw = inputEl.value;
+      const lines = raw.split('\n').filter(l => l.trim().length > 0);
+
+      if (lines.length === 0) {
+        inputEl.focus();
+        return;
+      }
+
+      if (localStorage.getItem(EMAIL_FLAG) === 'true') {
+        // Already submitted email — format immediately
+        const result = formatIds(raw, getSelectedFormat());
+        if (result) showOutput(result);
+      } else {
+        // Show email gate modal
+        openModal();
+      }
+    });
+
+    // ─── Modal logic ─────────────────────────────────────────────────────────
+
+    function openModal() {
+      modalOverlay.classList.add('visible');
+      emailInput.focus();
+    }
+
+    function closeModal() {
+      modalOverlay.classList.remove('visible');
+      emailError.classList.remove('visible');
+      modalSubmit.disabled = false;
+      modalSubmit.textContent = 'Get my results';
+    }
+
+    modalClose.addEventListener('click', closeModal);
+
+    modalOverlay.addEventListener('click', function (e) {
+      if (e.target === modalOverlay) closeModal();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modalOverlay.classList.contains('visible')) {
+        closeModal();
+      }
+    });
+
+    function validateEmail(email) {
+      return email.includes('@') && email.includes('.');
+    }
+
+    async function submitToMailerLite(email) {
+      try {
+        const response = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+
+        if (!response.ok) {
+          const body = await response.text();
+          console.error('Subscribe API error:', response.status, body);
+        }
+      } catch (err) {
+        console.error('Subscribe request failed:', err);
+      }
+    }
+
+    emailInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        modalSubmit.click();
+      }
+    });
+
+    modalSubmit.addEventListener('click', async function () {
+      const email = emailInput.value.trim();
+
+      if (!validateEmail(email)) {
+        emailError.classList.add('visible');
+        emailInput.focus();
+        return;
+      }
+
+      emailError.classList.remove('visible');
+      modalSubmit.disabled = true;
+      modalSubmit.textContent = 'Submitting…';
+
+      // Fire-and-forget — don't await before showing results
+      submitToMailerLite(email);
+
+      localStorage.setItem(EMAIL_FLAG, 'true');
+      closeModal();
+
+      const result = formatIds(inputEl.value, getSelectedFormat());
+      if (result) showOutput(result);
+    });
+
+    // ─── Copy to clipboard ───────────────────────────────────────────────────
+
+    copyBtn.addEventListener('click', function () {
+      const text = outputEl.value;
+      if (!text) return;
+
+      navigator.clipboard.writeText(text).then(function () {
+        copyBtn.textContent = 'Copied!';
+        copyBtn.classList.add('copied');
+        setTimeout(function () {
+          copyBtn.textContent = 'Copy to clipboard';
+          copyBtn.classList.remove('copied');
+        }, 2000);
+      }).catch(function () {
+        // Fallback for older browsers
+        outputEl.select();
+        document.execCommand('copy');
+        copyBtn.textContent = 'Copied!';
+        copyBtn.classList.add('copied');
+        setTimeout(function () {
+          copyBtn.textContent = 'Copy to clipboard';
+          copyBtn.classList.remove('copied');
+        }, 2000);
+      });
+    });
+
+    // ─── Reset ───────────────────────────────────────────────────────────────
+
+    resetBtn.addEventListener('click', function () {
+      inputEl.value = '';
+      outputEl.value = '';
+      statusEl.textContent = '';
+      outputSection.classList.remove('visible');
+      document.getElementById('format-auto').checked = true;
+      inputEl.focus();
+    });
+  </script>
+</body>
+</html>
