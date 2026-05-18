@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/sql-id-formatter.html" }
+  ]
+}
