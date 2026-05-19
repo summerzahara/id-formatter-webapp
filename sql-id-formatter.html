@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SQL ID Formatter</title>
+  <title>SQL ID Formatter — Summer Hamilton</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after {
       box-sizing: border-box;
@@ -11,74 +14,169 @@
       padding: 0;
     }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #ffffff;
-      color: #1a1a1a;
-      min-height: 100vh;
-      padding: 48px 16px 32px;
+    :root {
+      --bg:           #0a0a0a;
+      --fg:           #ffffff;
+      --fg-body:      #cccccc;
+      --fg-muted:     #888888;
+      --accent:       #faff69;
+      --accent-hover: #e6eb52;
+      --on-accent:    #0a0a0a;
+      --border:       #2a2a2a;
+      --border-strong:#3a3a3a;
+      --surface:      #1a1a1a;
+      --surface-2:    #242424;
+      --error:        #ef4444;
+
+      --font-display: 'Inter', system-ui, sans-serif;
+      --font-sans:    'Inter', system-ui, sans-serif;
+      --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
     }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    html {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-sans), system-ui, sans-serif;
+    }
+
+    /* ─── Nav ──────────────────────────────────────────────────────── */
+
+    .nav {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-wordmark {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+      text-decoration: none;
+      transition: color 150ms var(--ease);
+    }
+
+    .nav-wordmark:hover { color: var(--accent); }
+
+    .nav-back {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      text-decoration: none;
+      transition: color 150ms var(--ease);
+    }
+
+    .nav-back:hover { color: var(--accent); }
+
+    /* ─── Container ────────────────────────────────────────────────── */
 
     .container {
       max-width: 640px;
       margin: 0 auto;
+      padding: 64px 24px 48px;
     }
 
-    /* Header */
-    .header {
-      margin-bottom: 40px;
+    /* ─── Header ───────────────────────────────────────────────────── */
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
     }
 
     .header h1 {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: #111827;
-      letter-spacing: -0.02em;
-      margin-bottom: 8px;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 2.25rem;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      color: var(--fg);
+      margin-bottom: 12px;
     }
 
     .header p {
       font-size: 0.9375rem;
-      color: #6b7280;
-      line-height: 1.5;
+      font-weight: 400;
+      color: var(--fg-body);
+      line-height: 1.6;
+      margin-bottom: 48px;
     }
 
-    /* Form sections */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+
+    /* ─── Field label ──────────────────────────────────────────────── */
+
+    .field-label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      margin-bottom: 10px;
+    }
+
     .section {
       margin-bottom: 24px;
     }
 
-    label {
-      display: block;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #374151;
-      margin-bottom: 8px;
-    }
+    /* ─── Textareas ────────────────────────────────────────────────── */
 
     textarea {
       width: 100%;
-      padding: 12px 14px;
-      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+      padding: 14px 16px;
+      font-family: var(--font-mono);
       font-size: 0.875rem;
       line-height: 1.6;
-      color: #1a1a1a;
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
-      border-radius: 6px;
+      color: var(--fg);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0;
       resize: vertical;
-      transition: border-color 0.15s, box-shadow 0.15s;
       outline: none;
+      transition: border-color 150ms var(--ease);
     }
 
     textarea:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      border-color: var(--accent);
     }
 
-    textarea[readonly] {
-      cursor: default;
-      color: #374151;
+    textarea::placeholder {
+      color: var(--fg-muted);
+      opacity: 0.5;
     }
 
     #input-ids {
@@ -87,23 +185,21 @@
 
     #output-text {
       min-height: 120px;
-      background: #f0fdf4;
-      border-color: #d1fae5;
+      background: var(--surface-2);
+      cursor: default;
     }
 
-    /* Format selector */
+    /* ─── Format selector ──────────────────────────────────────────── */
+
     .format-selector {
       display: flex;
-      gap: 0;
+      border: 1px solid var(--border);
       margin-top: 12px;
-      border: 1px solid #e5e7eb;
-      border-radius: 6px;
-      overflow: hidden;
-      width: fit-content;
     }
 
     .format-option {
       position: relative;
+      flex: 1;
     }
 
     .format-option input[type="radio"] {
@@ -115,16 +211,19 @@
 
     .format-option label {
       display: block;
-      padding: 7px 16px;
-      font-size: 0.8125rem;
+      padding: 8px 16px;
+      font-family: var(--font-mono);
+      font-size: 11px;
       font-weight: 500;
-      color: #6b7280;
-      background: #ffffff;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      background: var(--surface);
       cursor: pointer;
-      border-right: 1px solid #e5e7eb;
+      border-right: 1px solid var(--border);
       margin: 0;
-      transition: background 0.1s, color 0.1s;
-      white-space: nowrap;
+      text-align: center;
+      transition: color 150ms var(--ease), background 150ms var(--ease);
       user-select: none;
     }
 
@@ -133,47 +232,48 @@
     }
 
     .format-option input[type="radio"]:checked + label {
-      background: #2563eb;
-      color: #ffffff;
+      color: var(--on-accent);
+      background: var(--accent);
     }
 
     .format-option label:hover {
-      background: #f3f4f6;
-      color: #374151;
+      color: var(--fg);
     }
 
     .format-option input[type="radio"]:checked + label:hover {
-      background: #2563eb;
-      color: #ffffff;
+      color: var(--on-accent);
     }
 
-    /* Primary button */
+    /* ─── Primary button ───────────────────────────────────────────── */
+
     .btn-primary {
       width: 100%;
       padding: 13px 20px;
-      font-family: inherit;
-      font-size: 0.9375rem;
-      font-weight: 600;
-      color: #ffffff;
-      background: #2563eb;
-      border: none;
-      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: transparent;
+      border: 1px solid var(--accent);
+      border-radius: 0;
       cursor: pointer;
-      transition: background 0.15s;
-      margin-bottom: 24px;
+      transition: background 150ms var(--ease), color 150ms var(--ease);
+      margin-bottom: 40px;
     }
 
     .btn-primary:hover {
-      background: #1d4ed8;
+      background: var(--accent-hover);
+      color: var(--on-accent);
     }
 
-    .btn-primary:active {
-      background: #1e40af;
-    }
+    /* ─── Output section ───────────────────────────────────────────── */
 
-    /* Output section */
     .output-section {
       display: none;
+      border-top: 1px solid var(--border);
+      padding-top: 40px;
     }
 
     .output-section.visible {
@@ -184,81 +284,100 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
-    .output-header label {
+    .output-header .field-label {
       margin: 0;
     }
 
     .btn-copy {
-      padding: 5px 14px;
-      font-family: inherit;
-      font-size: 0.8125rem;
+      padding: 6px 14px;
+      font-family: var(--font-mono);
+      font-size: 11px;
       font-weight: 500;
-      color: #2563eb;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--fg-muted);
       background: transparent;
-      border: 1px solid #2563eb;
-      border-radius: 5px;
+      border: 1px solid var(--border);
+      border-radius: 0;
       cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-      white-space: nowrap;
+      transition: color 150ms var(--ease), border-color 150ms var(--ease);
     }
 
     .btn-copy:hover {
-      background: #2563eb;
-      color: #ffffff;
+      color: var(--accent);
+      border-color: var(--accent);
     }
 
     .btn-copy.copied {
-      background: #059669;
-      border-color: #059669;
-      color: #ffffff;
+      color: var(--accent);
+      border-color: var(--accent);
     }
 
     .status-line {
-      margin-top: 10px;
-      font-size: 0.8125rem;
-      color: #6b7280;
+      margin-top: 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--fg-muted);
     }
 
     .reset-link {
       display: inline-block;
-      margin-top: 20px;
-      font-size: 0.875rem;
-      color: #2563eb;
+      margin-top: 24px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--fg-muted);
       text-decoration: none;
       cursor: pointer;
       background: none;
       border: none;
-      font-family: inherit;
       padding: 0;
+      transition: color 150ms var(--ease);
     }
 
     .reset-link:hover {
-      text-decoration: underline;
+      color: var(--accent);
     }
 
-    /* Footer */
+    /* ─── Footer ───────────────────────────────────────────────────── */
+
     .footer {
-      margin-top: 56px;
-      padding-top: 20px;
-      border-top: 1px solid #f3f4f6;
+      border-top: 1px solid var(--border);
+      padding: 24px;
       text-align: center;
-      font-size: 0.8125rem;
-      color: #9ca3af;
+      margin-top: 96px;
     }
 
-    /* Modal overlay */
+    .footer p {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--fg-muted);
+    }
+
+    .footer a {
+      color: var(--fg-muted);
+      text-decoration: none;
+      transition: color 150ms var(--ease);
+    }
+
+    .footer a:hover {
+      color: var(--accent);
+    }
+
+    /* ─── Modal ────────────────────────────────────────────────────── */
+
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.45);
+      background: rgba(0, 0, 0, 0.75);
       z-index: 100;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 24px;
     }
 
     .modal-overlay.visible {
@@ -266,77 +385,102 @@
     }
 
     .modal {
-      background: #ffffff;
-      border-radius: 10px;
-      padding: 32px 28px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 40px 36px;
       max-width: 420px;
       width: 100%;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
       position: relative;
     }
 
     .modal-close {
       position: absolute;
-      top: 14px;
-      right: 16px;
+      top: 16px;
+      right: 20px;
       background: none;
       border: none;
-      font-size: 1.25rem;
-      color: #9ca3af;
+      font-size: 18px;
+      color: var(--fg-muted);
       cursor: pointer;
       line-height: 1;
       padding: 4px;
+      transition: color 150ms var(--ease);
     }
 
     .modal-close:hover {
-      color: #374151;
+      color: var(--fg);
+    }
+
+    .modal-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
     }
 
     .modal h2 {
-      font-size: 1.125rem;
+      font-family: var(--font-display);
       font-weight: 700;
-      color: #111827;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+      color: var(--fg);
       margin-bottom: 10px;
     }
 
     .modal p {
       font-size: 0.875rem;
-      color: #6b7280;
+      font-weight: 400;
+      color: var(--fg-body);
       line-height: 1.6;
-      margin-bottom: 20px;
+      margin-bottom: 28px;
     }
 
     .modal-input-group {
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     .modal-input-group label {
-      font-size: 0.8125rem;
-      margin-bottom: 6px;
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      margin-bottom: 8px;
     }
 
     .modal-input-group input[type="email"] {
       width: 100%;
-      padding: 10px 13px;
-      font-family: inherit;
+      padding: 12px 14px;
+      font-family: var(--font-sans);
       font-size: 0.875rem;
-      color: #1a1a1a;
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
-      border-radius: 6px;
+      color: var(--fg);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 0;
       outline: none;
-      transition: border-color 0.15s, box-shadow 0.15s;
+      transition: border-color 150ms var(--ease);
     }
 
     .modal-input-group input[type="email"]:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      border-color: var(--accent);
+    }
+
+    .modal-input-group input[type="email"]::placeholder {
+      color: var(--fg-muted);
+      opacity: 0.5;
     }
 
     .modal-error {
-      font-size: 0.8125rem;
-      color: #dc2626;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--error);
       margin-top: 6px;
+      letter-spacing: 0.5px;
       display: none;
     }
 
@@ -346,47 +490,44 @@
 
     .btn-modal-submit {
       width: 100%;
-      padding: 11px 20px;
-      font-family: inherit;
-      font-size: 0.9375rem;
-      font-weight: 600;
-      color: #ffffff;
-      background: #2563eb;
-      border: none;
-      border-radius: 6px;
+      padding: 12px 20px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: transparent;
+      border: 1px solid var(--accent);
+      border-radius: 0;
       cursor: pointer;
-      transition: background 0.15s;
+      transition: background 150ms var(--ease), color 150ms var(--ease);
     }
 
     .btn-modal-submit:hover {
-      background: #1d4ed8;
+      background: var(--accent-hover);
+      color: var(--on-accent);
     }
 
     .btn-modal-submit:disabled {
-      background: #93c5fd;
+      opacity: 0.4;
       cursor: default;
+      pointer-events: none;
     }
 
-    /* Mobile */
+    /* ─── Mobile ───────────────────────────────────────────────────── */
+
     @media (max-width: 480px) {
-      body {
-        padding: 32px 16px 24px;
+      .container {
+        padding: 48px 24px 40px;
       }
 
       .header h1 {
-        font-size: 1.5rem;
+        font-size: 1.875rem;
       }
 
-      .format-selector {
-        width: 100%;
-      }
-
-      .format-option {
-        flex: 1;
-      }
-
-      .format-option label {
-        text-align: center;
+      .modal {
+        padding: 32px 24px;
       }
     }
   </style>
@@ -397,26 +538,35 @@
   <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal">
       <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
-      <h2 id="modal-title">See your results</h2>
+      <div class="modal-eyebrow">Free tool</div>
+      <h2 id="modal-title">Get your results</h2>
       <p>Get the formatted list plus occasional tips for data analysts.</p>
       <div class="modal-input-group">
         <label for="email-input">Email address</label>
         <input type="email" id="email-input" placeholder="you@example.com" autocomplete="email">
         <div class="modal-error" id="email-error">Please enter a valid email address.</div>
       </div>
-      <button class="btn-modal-submit" id="modal-submit">Get my results</button>
+      <button class="btn-modal-submit" id="modal-submit">Get my results →</button>
     </div>
   </div>
 
+  <nav class="nav">
+    <a href="https://summerhamil10.com" class="nav-wordmark">Summer Hamilton</a>
+    <a href="https://summerhamil10.com" class="nav-back">← Back</a>
+  </nav>
+
   <div class="container">
     <header class="header">
+      <div class="eyebrow">Tool</div>
       <h1>SQL ID Formatter</h1>
       <p>Paste IDs from a spreadsheet. Get them formatted for SQL in one click.</p>
     </header>
 
+    <hr class="divider">
+
     <main>
       <div class="section">
-        <label for="input-ids">Paste your IDs (one per line)</label>
+        <label class="field-label" for="input-ids">Paste your IDs (one per line)</label>
         <textarea id="input-ids" placeholder="1001&#10;1002&#10;1003" spellcheck="false"></textarea>
 
         <div class="format-selector" role="group" aria-label="Output format">
@@ -435,28 +585,30 @@
         </div>
       </div>
 
-      <button class="btn-primary" id="format-btn">Format IDs</button>
+      <button class="btn-primary" id="format-btn">Format IDs →</button>
 
       <div class="output-section" id="output-section">
         <div class="output-header">
-          <label for="output-text">Your formatted list</label>
-          <button class="btn-copy" id="copy-btn">Copy to clipboard</button>
+          <label class="field-label" for="output-text">Your formatted list</label>
+          <button class="btn-copy" id="copy-btn">Copy →</button>
         </div>
         <textarea id="output-text" readonly spellcheck="false"></textarea>
         <div class="status-line" id="status-line"></div>
-        <button class="reset-link" id="reset-btn">Format another list</button>
+        <button class="reset-link" id="reset-btn">Format another list →</button>
       </div>
     </main>
-
-    <footer class="footer">
-      Built by Summer Hamil | summerhamil10.com
-    </footer>
   </div>
 
+  <footer class="footer">
+    <p>© 2026 <a href="https://summerhamil10.com">Summer Hamilton</a> · summerhamil10.com</p>
+  </footer>
+
   <script>
+    const MAILERLITE_API_KEY  = '[FILL IN: your MailerLite API key]';
+    const MAILERLITE_GROUP_ID = '[FILL IN: your MailerLite group ID]';
+
     const EMAIL_FLAG = 'sql_formatter_email_submitted';
 
-    // Element refs
     const inputEl       = document.getElementById('input-ids');
     const formatBtn     = document.getElementById('format-btn');
     const outputSection = document.getElementById('output-section');
@@ -471,7 +623,7 @@
     const emailError    = document.getElementById('email-error');
     const modalSubmit   = document.getElementById('modal-submit');
 
-    // ─── Format logic ────────────────────────────────────────────────────────
+    // ─── Format logic ────────────────────────────────────────────────
 
     function getSelectedFormat() {
       return document.querySelector('input[name="format"]:checked').value;
@@ -495,7 +647,6 @@
       } else if (formatOverride === 'string') {
         useNumeric = false;
       } else {
-        // Auto-detect: numeric only if every line is a valid number
         useNumeric = lines.every(isNumeric);
       }
 
@@ -510,31 +661,23 @@
       outputEl.value = result.formatted;
       statusEl.textContent = `${result.count} ID${result.count !== 1 ? 's' : ''} formatted as ${result.type}`;
       outputSection.classList.add('visible');
-      outputEl.style.minHeight = Math.min(8, result.count) * 1.6 * 14 + 24 + 'px';
     }
 
-    // ─── Format button handler ───────────────────────────────────────────────
+    // ─── Format button ────────────────────────────────────────────────
 
     formatBtn.addEventListener('click', function () {
-      const raw = inputEl.value;
-      const lines = raw.split('\n').filter(l => l.trim().length > 0);
-
-      if (lines.length === 0) {
-        inputEl.focus();
-        return;
-      }
+      const lines = inputEl.value.split('\n').filter(l => l.trim().length > 0);
+      if (lines.length === 0) { inputEl.focus(); return; }
 
       if (localStorage.getItem(EMAIL_FLAG) === 'true') {
-        // Already submitted email — format immediately
-        const result = formatIds(raw, getSelectedFormat());
+        const result = formatIds(inputEl.value, getSelectedFormat());
         if (result) showOutput(result);
       } else {
-        // Show email gate modal
         openModal();
       }
     });
 
-    // ─── Modal logic ─────────────────────────────────────────────────────────
+    // ─── Modal ────────────────────────────────────────────────────────
 
     function openModal() {
       modalOverlay.classList.add('visible');
@@ -545,7 +688,7 @@
       modalOverlay.classList.remove('visible');
       emailError.classList.remove('visible');
       modalSubmit.disabled = false;
-      modalSubmit.textContent = 'Get my results';
+      modalSubmit.textContent = 'Get my results →';
     }
 
     modalClose.addEventListener('click', closeModal);
@@ -555,9 +698,7 @@
     });
 
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && modalOverlay.classList.contains('visible')) {
-        closeModal();
-      }
+      if (e.key === 'Escape' && modalOverlay.classList.contains('visible')) closeModal();
     });
 
     function validateEmail(email) {
@@ -571,7 +712,6 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email }),
         });
-
         if (!response.ok) {
           const body = await response.text();
           console.error('Subscribe API error:', response.status, body);
@@ -582,14 +722,11 @@
     }
 
     emailInput.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') {
-        modalSubmit.click();
-      }
+      if (e.key === 'Enter') modalSubmit.click();
     });
 
     modalSubmit.addEventListener('click', async function () {
       const email = emailInput.value.trim();
-
       if (!validateEmail(email)) {
         emailError.classList.add('visible');
         emailInput.focus();
@@ -600,7 +737,6 @@
       modalSubmit.disabled = true;
       modalSubmit.textContent = 'Submitting…';
 
-      // Fire-and-forget — don't await before showing results
       submitToMailerLite(email);
 
       localStorage.setItem(EMAIL_FLAG, 'true');
@@ -610,33 +746,32 @@
       if (result) showOutput(result);
     });
 
-    // ─── Copy to clipboard ───────────────────────────────────────────────────
+    // ─── Copy ─────────────────────────────────────────────────────────
 
     copyBtn.addEventListener('click', function () {
       const text = outputEl.value;
       if (!text) return;
 
       navigator.clipboard.writeText(text).then(function () {
-        copyBtn.textContent = 'Copied!';
+        copyBtn.textContent = 'Copied ✓';
         copyBtn.classList.add('copied');
         setTimeout(function () {
-          copyBtn.textContent = 'Copy to clipboard';
+          copyBtn.textContent = 'Copy →';
           copyBtn.classList.remove('copied');
         }, 2000);
       }).catch(function () {
-        // Fallback for older browsers
         outputEl.select();
         document.execCommand('copy');
-        copyBtn.textContent = 'Copied!';
+        copyBtn.textContent = 'Copied ✓';
         copyBtn.classList.add('copied');
         setTimeout(function () {
-          copyBtn.textContent = 'Copy to clipboard';
+          copyBtn.textContent = 'Copy →';
           copyBtn.classList.remove('copied');
         }, 2000);
       });
     });
 
-    // ─── Reset ───────────────────────────────────────────────────────────────
+    // ─── Reset ────────────────────────────────────────────────────────
 
     resetBtn.addEventListener('click', function () {
       inputEl.value = '';
